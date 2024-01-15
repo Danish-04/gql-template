@@ -12,12 +12,3 @@ directive @auth on FIELD_DEFINITION
 directive @admin on FIELD_DEFINITION
 "required Authorization header with valid access key & secret key"
 directive @serviceAccount on FIELD_DEFINITION
-
-type Query {
-	hello: String
-	myDate: Date
-}
-
-type User {
-	man: String
-}

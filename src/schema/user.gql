@@ -1,0 +1,35 @@
+type User{
+    uid: String
+    fullname: String
+    username: String
+    password: String
+    createdAt: DateTimeISO
+    Posts: [Post]
+}
+
+type Post {
+    id:Int
+    title: String
+    body: String
+    createdAt: DateTimeISO
+}
+
+input UserInput{
+    fullname: String
+    username: String
+    password: String
+}
+
+
+
+type Query {
+    getUsers: [User]
+    getUser (username: String!, password: String): User
+}
+
+type Mutation {
+    createUser(form: UserInput!): User
+    updateUser(uid: String!, form: UserInput): User
+    deleteUser(uid: String!): User
+   
+}

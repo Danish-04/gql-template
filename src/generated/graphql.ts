@@ -7,6 +7,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: { input: string; output: string; }
@@ -88,15 +89,63 @@ export type Scalars = {
   Void: { input: any; output: any; }
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  createUser?: Maybe<User>;
+  deleteUser?: Maybe<User>;
+  updateUser?: Maybe<User>;
+};
+
+
+export type MutationCreateUserArgs = {
+  form: UserInput;
+};
+
+
+export type MutationDeleteUserArgs = {
+  uid: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  form?: InputMaybe<UserInput>;
+  uid: Scalars['String']['input'];
+};
+
+export type Post = {
+  __typename?: 'Post';
+  body?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  title?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  hello?: Maybe<Scalars['String']['output']>;
-  myDate?: Maybe<Scalars['Date']['output']>;
+  getUser?: Maybe<User>;
+  getUsers?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type QueryGetUserArgs = {
+  password?: InputMaybe<Scalars['String']['input']>;
+  username: Scalars['String']['input'];
 };
 
 export type User = {
   __typename?: 'User';
-  man?: Maybe<Scalars['String']['output']>;
+  Posts?: Maybe<Array<Maybe<Post>>>;
+  createdAt?: Maybe<Scalars['DateTimeISO']['output']>;
+  fullname?: Maybe<Scalars['String']['output']>;
+  password?: Maybe<Scalars['String']['output']>;
+  uid?: Maybe<Scalars['String']['output']>;
+  username?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserInput = {
+  fullname?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -199,6 +248,7 @@ export type ResolversTypes = {
   IPv6: ResolverTypeWrapper<Scalars['IPv6']['output']>;
   ISBN: ResolverTypeWrapper<Scalars['ISBN']['output']>;
   ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']['output']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']['output']>;
   JWT: ResolverTypeWrapper<Scalars['JWT']['output']>;
@@ -212,6 +262,7 @@ export type ResolversTypes = {
   Long: ResolverTypeWrapper<Scalars['Long']['output']>;
   Longitude: ResolverTypeWrapper<Scalars['Longitude']['output']>;
   MAC: ResolverTypeWrapper<Scalars['MAC']['output']>;
+  Mutation: ResolverTypeWrapper<{}>;
   NegativeFloat: ResolverTypeWrapper<Scalars['NegativeFloat']['output']>;
   NegativeInt: ResolverTypeWrapper<Scalars['NegativeInt']['output']>;
   NonEmptyString: ResolverTypeWrapper<Scalars['NonEmptyString']['output']>;
@@ -224,6 +275,7 @@ export type ResolversTypes = {
   Port: ResolverTypeWrapper<Scalars['Port']['output']>;
   PositiveFloat: ResolverTypeWrapper<Scalars['PositiveFloat']['output']>;
   PositiveInt: ResolverTypeWrapper<Scalars['PositiveInt']['output']>;
+  Post: ResolverTypeWrapper<Post>;
   PostalCode: ResolverTypeWrapper<Scalars['PostalCode']['output']>;
   Query: ResolverTypeWrapper<{}>;
   RGB: ResolverTypeWrapper<Scalars['RGB']['output']>;
@@ -241,6 +293,7 @@ export type ResolversTypes = {
   UnsignedFloat: ResolverTypeWrapper<Scalars['UnsignedFloat']['output']>;
   UnsignedInt: ResolverTypeWrapper<Scalars['UnsignedInt']['output']>;
   User: ResolverTypeWrapper<User>;
+  UserInput: UserInput;
   UtcOffset: ResolverTypeWrapper<Scalars['UtcOffset']['output']>;
   Void: ResolverTypeWrapper<Scalars['Void']['output']>;
 };
@@ -276,6 +329,7 @@ export type ResolversParentTypes = {
   IPv6: Scalars['IPv6']['output'];
   ISBN: Scalars['ISBN']['output'];
   ISO8601Duration: Scalars['ISO8601Duration']['output'];
+  Int: Scalars['Int']['output'];
   JSON: Scalars['JSON']['output'];
   JSONObject: Scalars['JSONObject']['output'];
   JWT: Scalars['JWT']['output'];
@@ -289,6 +343,7 @@ export type ResolversParentTypes = {
   Long: Scalars['Long']['output'];
   Longitude: Scalars['Longitude']['output'];
   MAC: Scalars['MAC']['output'];
+  Mutation: {};
   NegativeFloat: Scalars['NegativeFloat']['output'];
   NegativeInt: Scalars['NegativeInt']['output'];
   NonEmptyString: Scalars['NonEmptyString']['output'];
@@ -301,6 +356,7 @@ export type ResolversParentTypes = {
   Port: Scalars['Port']['output'];
   PositiveFloat: Scalars['PositiveFloat']['output'];
   PositiveInt: Scalars['PositiveInt']['output'];
+  Post: Post;
   PostalCode: Scalars['PostalCode']['output'];
   Query: {};
   RGB: Scalars['RGB']['output'];
@@ -318,6 +374,7 @@ export type ResolversParentTypes = {
   UnsignedFloat: Scalars['UnsignedFloat']['output'];
   UnsignedInt: Scalars['UnsignedInt']['output'];
   User: User;
+  UserInput: UserInput;
   UtcOffset: Scalars['UtcOffset']['output'];
   Void: Scalars['Void']['output'];
 };
@@ -502,6 +559,12 @@ export interface MacScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
   name: 'MAC';
 }
 
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'form'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'uid'>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'uid'>>;
+};
+
 export interface NegativeFloatScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['NegativeFloat'], any> {
   name: 'NegativeFloat';
 }
@@ -550,13 +613,21 @@ export interface PositiveIntScalarConfig extends GraphQLScalarTypeConfig<Resolve
   name: 'PositiveInt';
 }
 
+export type PostResolvers<ContextType = any, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTimeISO']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface PostalCodeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['PostalCode'], any> {
   name: 'PostalCode';
 }
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  myDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  getUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserArgs, 'username'>>;
+  getUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };
 
 export interface RgbScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['RGB'], any> {
@@ -612,7 +683,12 @@ export interface UnsignedIntScalarConfig extends GraphQLScalarTypeConfig<Resolve
 }
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  man?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  Posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTimeISO']>, ParentType, ContextType>;
+  fullname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  password?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  uid?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  username?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -666,6 +742,7 @@ export type Resolvers<ContextType = any> = {
   Long?: GraphQLScalarType;
   Longitude?: GraphQLScalarType;
   MAC?: GraphQLScalarType;
+  Mutation?: MutationResolvers<ContextType>;
   NegativeFloat?: GraphQLScalarType;
   NegativeInt?: GraphQLScalarType;
   NonEmptyString?: GraphQLScalarType;
@@ -678,6 +755,7 @@ export type Resolvers<ContextType = any> = {
   Port?: GraphQLScalarType;
   PositiveFloat?: GraphQLScalarType;
   PositiveInt?: GraphQLScalarType;
+  Post?: PostResolvers<ContextType>;
   PostalCode?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
   RGB?: GraphQLScalarType;

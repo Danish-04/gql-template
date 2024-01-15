@@ -3,7 +3,9 @@ import { startStandaloneServer } from '@apollo/server/standalone'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { makeExecutableSchema } from '@graphql-tools/schema'
-import Resolvers from './resolvers/index'
+// import Resolvers from './resolvers/index'
+import userResolver from './resolvers/user'
+
 import { typeDefs as ScalarTypeDefs } from 'graphql-scalars'
 import mongoose from 'mongoose'
 import { vars } from './env'
@@ -17,7 +19,7 @@ mongoose.set('strictQuery', true)
 
 let mods = makeExecutableSchema({
 	typeDefs: [typeDefs, ScalarTypeDefs],
-	resolvers: Resolvers,
+	resolvers: userResolver,
 })
 
 async function main() {
