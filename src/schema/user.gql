@@ -20,16 +20,26 @@ input UserInput{
     password: String
 }
 
-
+union UserOrPostRes = User | Post
+union UserResult = User | BadUserInput | UserNotFound | Unauthorized | Forbidden | InternalServer
 
 type Query {
+    "Fetch all users"
     getUsers: [User]
-    getUser (username: String!, password: String): User
+    """Fetch your own data only
+    by authenticating with your username and password"""
+    getUser (username: String!, password: String!): UserResult
+ 
+    getUserOrPost(id: String!): UserOrPostRes
+
 }
 
 type Mutation {
-    createUser(form: UserInput!): User
-    updateUser(uid: String!, form: UserInput): User
-    deleteUser(uid: String!): User
+    "Create a new user"
+    createUser(form: UserInput!): UserResult
+    "Update your details"
+    updateUser(uid: String!, form: UserInput!): UserResult
+    "Delete your account"
+    deleteUser(uid: String!): UserResult
    
 }

@@ -1,0 +1,30 @@
+
+interface Error {
+    code: Int!
+    message: String!
+}
+
+type BadUserInput implements Error {
+    code: Int!
+    message: String!
+}
+
+type UserNotFound implements Error {
+    code: Int!
+    message: String!
+}
+
+type Unauthorized implements Error {
+    code: Int!
+    message: String!
+}
+
+type Forbidden implements Error {
+    code: Int!
+    message: String!
+}
+
+type InternalServer implements Error {
+    code: Int!
+    message: String!
+}
